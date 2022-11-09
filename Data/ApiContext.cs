@@ -8,12 +8,16 @@ namespace GerenciadorFinanca.Data
     public class ApiContext : DbContext
     {
         public DbSet<Despesa> Despesas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
-/*        public ApiContext(){
-            
-        }*/
+
         public ApiContext(DbContextOptions<ApiContext> options) : base(options)
         {      
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {      
+        //insere a url que indica a configuração das propriedades no banco de dados
         }
     }
 }

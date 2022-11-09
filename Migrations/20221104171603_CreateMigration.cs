@@ -28,7 +28,7 @@ namespace GerenciadorFinanca.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Despesas", x => x.Id);
+                    table.PrimaryKey("PK_Despesas", x => x.Id); //chave primária da class despesa
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
         }
