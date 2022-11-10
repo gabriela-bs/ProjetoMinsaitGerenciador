@@ -2,6 +2,7 @@ using System;
 using GerenciadorFinanca.Models;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace GerenciadorFinanca.Data
 
 {
@@ -17,7 +18,11 @@ namespace GerenciadorFinanca.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {      
-        //insere a url que indica a configuração das propriedades no banco de dados
+            builder.Entity<Despesa>()
+            .HasOne (r => r.Usuario)
+            .WithMany(c => c.Despesas)
+            .HasForeignKey(r => r.DespFK)
+            ;
         }
     }
 }

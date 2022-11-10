@@ -8,17 +8,20 @@ namespace GerenciadorFinanca.Models
 {
     public class Usuario
     {
+        [Key]
         public int IdUsuario { get; set; }
 
         [Required(ErrorMessage = "Digite o email", AllowEmptyStrings = false)]
+        [StringLength(50)]
         [EmailAddress(ErrorMessage = "O email informado está incorreto")]
-        private string EmailUsuario { get; set; }
+        public string EmailUsuario { get; set; }
+
 
         [Required(ErrorMessage = "Digite a senha", AllowEmptyStrings = false)]
+        [MinLength(6)]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Password)] //mostra a senha no formato *
-        private string Senha { get; set; }
-
-        public List<Despesa> Despesa { get; set;} //cria a lista de despesas de 1 usuario no relacionamento 1 para muitos
+        public string Senha { get; set; }
+        public List<Despesa> Despesas { get; set; }
 
     }
 }

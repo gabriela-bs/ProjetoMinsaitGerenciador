@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using GerenciadorFinanca.Data;
+using GerenciadorFinanca.Repositorio.IContratos;
+using GerenciadorFinanca.Repositorio;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,8 @@ builder.Services.AddDbContext<ApiContext>(
     options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version("8.0.31")))
 );
+
+builder.Services.AddScoped<IDespesaRepositorio, DespesaRepositorio>();
 
 builder.Services.AddEndpointsApiExplorer();
 

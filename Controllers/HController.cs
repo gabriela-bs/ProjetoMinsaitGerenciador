@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorFinanca.Controllers
 {
-    public class Controller : ControllerBase
+    public class HController : ControllerBase
     {
         private readonly ApiContext _contexto;
 
-        public Controller(ApiContext contexto){
+        public HController(ApiContext contexto){
             _contexto = contexto;
         }
 

@@ -3,6 +3,7 @@ using System;
 using GerenciadorFinanca.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GerenciadorFinanca.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20221110143223_chavefk")]
+    partial class chavefk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,64 +29,59 @@ namespace GerenciadorFinanca.Migrations
 
                     b.Property<string>("Categoria")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("DespFK")
-                        .HasColumnType("int");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("DespesaData")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("NomeDespesa")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("longtext");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal 10,2(65,30)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DespFK");
 
                     b.ToTable("Despesas");
                 });
 
             modelBuilder.Entity("GerenciadorFinanca.Models.Usuario", b =>
                 {
-                    b.Property<int>("IdUsuario")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("EmailUsuario")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
 
                     b.Property<string>("Senha")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("IdUsuario");
+                    b.Property<int>("despesaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("despesaId");
 
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("GerenciadorFinanca.Models.Despesa", b =>
+            modelBuilder.Entity("GerenciadorFinanca.Models.Usuario", b =>
                 {
-                    b.HasOne("GerenciadorFinanca.Models.Usuario", "Usuario")
-                        .WithMany("Despesas")
-                        .HasForeignKey("DespFK")
+                    b.HasOne("GerenciadorFinanca.Models.Despesa", "despesa")
+                        .WithMany()
+                        .HasForeignKey("despesaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("GerenciadorFinanca.Models.Usuario", b =>
-                {
-                    b.Navigation("Despesas");
+                    b.Navigation("despesa");
                 });
 #pragma warning restore 612, 618
         }
