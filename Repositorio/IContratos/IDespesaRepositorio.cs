@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GerenciadorFinanca.Models;
 
 namespace GerenciadorFinanca.Repositorio.IContratos
@@ -8,7 +9,8 @@ namespace GerenciadorFinanca.Repositorio.IContratos
         Task EditarDespesa(int id, Despesa despesa);
         Task Deletar(int id);
         Task <Despesa?> BuscarPorId(int Id);
-       Task <List<Despesa>> ListarGastos();     
+        Task <List<Despesa>> ListarGastos();
+//        Task <Despesa> TotalGastos();  
 
     }
 }

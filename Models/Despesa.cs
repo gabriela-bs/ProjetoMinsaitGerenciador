@@ -34,9 +34,7 @@ namespace GerenciadorFinanca.Models
         [StringLength(100)]
         public string Categoria { get; set;}
 
-        
-        public int DespFK { get; set; } //chave estrangeira
-
+ //       public int DespFK { get; set; } //chave estrangeira
         public Usuario Usuario { get; set;}
 
 

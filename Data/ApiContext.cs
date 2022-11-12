@@ -21,7 +21,7 @@ namespace GerenciadorFinanca.Data
             builder.Entity<Despesa>()
             .HasOne (r => r.Usuario)
             .WithMany(c => c.Despesas)
-            .HasForeignKey(r => r.DespFK)
+            .HasForeignKey(r => r.Id)
             ;
         }
     }
