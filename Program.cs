@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using GerenciadorFinanca.Data;
 using GerenciadorFinanca.Repositorio.IContratos;
 using GerenciadorFinanca.Repositorio;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,14 @@ builder.Services.AddDbContext<ApiContext>(
     options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version("8.0.31")))
 );
+
+
+builder.Services.AddDefaultIdentity<IdentityUser>()
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<ApiContext>()
+        .AddDefaultTokenProviders();
+
+
 
 builder.Services.AddScoped<IDespesaRepositorio, DespesaRepositorio>();
 
@@ -40,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

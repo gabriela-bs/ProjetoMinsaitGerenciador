@@ -2,14 +2,17 @@ using GerenciadorFinanca.Repositorio.IContratos;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using GerenciadorFinanca.Models;
-
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 
 namespace GerenciadorFinanca.Controllers
 {
+
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class DespesaController : Controller
+    public class DespesaController : ControllerBase
     {
 
         private readonly IDespesaRepositorio _despesaRepositorio;
@@ -20,24 +23,28 @@ namespace GerenciadorFinanca.Controllers
 
 
     [HttpGet]
-    public async Task<ActionResult<List<Despesa>>> GetDespesas(){
-        var despesas = await _despesaRepositorio.ListarGastos();
+    public async Task <IEnumerable<Despesa>> ListaTudo(){
 
-        if(despesas == null){
-            return BadRequest();
-        }
-        return Ok(despesas);
+        var item = await _despesaRepositorio.ListarGastos();
+        return item;
     }
 
 
-    [HttpGet]
-    [Route("get-teste")]
-    public async Task<IActionResult> Busca(int id){
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Buscar(int id){
+
         var desp = await _despesaRepositorio.BuscarPorId(id);
+
+
+        if(desp == null){
+            return NotFound();
+        }
+
+
         return Ok(desp);
     }
 
-
+ //   [ClaimsAuthorize("Incluir Despesa")]
     [HttpPost]
     public async Task<IActionResult> CriaDespesa (Despesa desp){
 
@@ -46,39 +53,35 @@ namespace GerenciadorFinanca.Controllers
         }
 
         await _despesaRepositorio.AdicionarDespesa(desp);
-        return CreatedAtAction($"/get-teste?id={desp.Id}", desp);
+        return CreatedAtAction("Buscar", new { id = desp.IdDespesa}, desp);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> AtualizandoDesp(int id, Despesa despAtualizada){
 
-        if(id != despAtualizada.Id){
+ //   [ClaimsAuthorize("Atualizar Despesa")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> AtualizandoDesp(int id, Despesa desp){
+
+        if(id != desp.IdDespesa){
+            
             return BadRequest($"Não foi possível atualizar {id}");
         }
 
-        await _despesaRepositorio.EditarDespesa(id, despAtualizada); 
+        await _despesaRepositorio.EditarDespesa(desp); 
         return NoContent();
     }
 
+ //   [ClaimsAuthorize("Deletar Despesa")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletandoDesp (int id){
+    public async Task<IActionResult> DeletarDesp (int id){
+
         var despDeletada = await _despesaRepositorio.BuscarPorId(id);
 
-        if (despDeletada == null){
+          if (despDeletada == null){
             return NotFound();
         }
-
         await _despesaRepositorio.Deletar(id);
         return Ok(despDeletada);
     }
-
-
-
-
-
-
-
-
   
 }
 }

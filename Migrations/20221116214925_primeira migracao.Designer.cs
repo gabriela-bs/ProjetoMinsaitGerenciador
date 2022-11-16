@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GerenciadorFinanca.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    [Migration("20221104171603_CreateMigration")]
-    partial class CreateMigration
+    [Migration("20221116214925_primeira migracao")]
+    partial class primeiramigracao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,14 +23,14 @@ namespace GerenciadorFinanca.Migrations
 
             modelBuilder.Entity("GerenciadorFinanca.Models.Despesa", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdDespesa")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Categoria")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<DateTime>("DespesaData")
                         .HasColumnType("datetime(6)");
@@ -43,7 +43,7 @@ namespace GerenciadorFinanca.Migrations
                     b.Property<decimal>("Valor")
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdDespesa");
 
                     b.ToTable("Despesas");
                 });
