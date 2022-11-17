@@ -2165,11 +2165,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
+      "projectUniqueName": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\BackEnd\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
       "projectName": "GerenciadorFinanca",
-      "projectPath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
+      "projectPath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\BackEnd\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
       "packagesPath": "C:\\Users\\GIL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\GerenciadorFinanca\\obj\\",
+      "outputPath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\BackEnd\\GerenciadorFinanca\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\GIL\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+7bJbDvE4PjfmccfWkZJMo/ZWmj8ur2bKw7znHYjDOrSqGuzl1NI9NHhMg9Bjnv94XzucBEKeHmg6gse7aF9XQ==",
+  "dgSpecHash": "YMr7vyfDQUDOD11piJY1Jzp4OaJHXst/T7ebKPDubk6gykr4ccbozVQa4CWEeG4FCPxezh6usqWWlDnfQ/1WyA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
+  "projectFilePath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\BackEnd\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\GIL\\.nuget\\packages\\fluentvalidation\\11.2.1\\fluentvalidation.11.2.1.nupkg.sha512",
     "C:\\Users\\GIL\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.2.2\\fluentvalidation.aspnetcore.11.2.2.nupkg.sha512",
