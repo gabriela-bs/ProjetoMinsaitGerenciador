@@ -1,10 +1,12 @@
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using GerenciadorFinanca.Data;
+using Microsoft.AspNetCore.Identity;
+using GerenciadorFinanca.Serviços;
 using GerenciadorFinanca.Repositorio.IContratos;
 using GerenciadorFinanca.Repositorio;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,38 @@ builder.Services.AddDefaultIdentity<IdentityUser>()
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApiContext>()
         .AddDefaultTokenProviders();
+
+
+    //Configuração do JWT
+var JwtConfigSection = builder.Configuration.GetSection("JwtConfig");
+builder.Services.Configure<JwtConfig>(JwtConfigSection);
+
+var jwtConfig = JwtConfigSection.Get<JwtConfig>();
+var key = Encoding.ASCII.GetBytes(jwtConfig.Secreto);
+
+
+builder.Services.AddAuthentication(a => {
+    a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(a => {
+        a.RequireHttpsMetadata = true;
+        a.SaveToken = true;
+        a.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = jwtConfig.ValidoEm,
+            ValidIssuer = jwtConfig.Emissor
+        };
+
+    });
+
+
+
+
+
 
 
 

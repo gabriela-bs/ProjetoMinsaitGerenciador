@@ -60,9 +60,6 @@ C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\D
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\GerenciadorFinanca.runtimeconfig.json
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\GerenciadorFinanca.dll
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\GerenciadorFinanca.pdb
-C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\FluentValidation.dll
-C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\FluentValidation.AspNetCore.dll
-C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\FluentValidation.DependencyInjectionExtensions.dll
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\Humanizer.dll
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\GIL\Projetos\ProjetoMinsaitGerenciador\BackEnd\GerenciadorFinanca\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll

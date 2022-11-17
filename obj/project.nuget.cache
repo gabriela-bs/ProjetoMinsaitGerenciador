@@ -1,12 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "YMr7vyfDQUDOD11piJY1Jzp4OaJHXst/T7ebKPDubk6gykr4ccbozVQa4CWEeG4FCPxezh6usqWWlDnfQ/1WyA==",
+  "dgSpecHash": "tI2bdAZyELQFCikMBJ7XbBgoYq8Iuqu/LnRRVm3pN5zU1msbWDHkNal+v+J+Wyh925GdheQsRoKamAwfeSV9Mw==",
   "success": true,
   "projectFilePath": "C:\\Users\\GIL\\Projetos\\ProjetoMinsaitGerenciador\\BackEnd\\GerenciadorFinanca\\GerenciadorFinanca.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\GIL\\.nuget\\packages\\fluentvalidation\\11.2.1\\fluentvalidation.11.2.1.nupkg.sha512",
-    "C:\\Users\\GIL\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.2.2\\fluentvalidation.aspnetcore.11.2.2.nupkg.sha512",
-    "C:\\Users\\GIL\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.2.1\\fluentvalidation.dependencyinjectionextensions.11.2.1.nupkg.sha512",
     "C:\\Users\\GIL\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\GIL\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.10\\microsoft.aspnetcore.authentication.jwtbearer.6.0.10.nupkg.sha512",
     "C:\\Users\\GIL\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.10\\microsoft.aspnetcore.cryptography.internal.6.0.10.nupkg.sha512",
