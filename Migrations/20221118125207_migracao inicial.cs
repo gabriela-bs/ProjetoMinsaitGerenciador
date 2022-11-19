@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GerenciadorFinanca.Migrations
 {
-    public partial class primeiramigracao : Migration
+    public partial class migracaoinicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,7 @@ namespace GerenciadorFinanca.Migrations
                 name: "Despesas",
                 columns: table => new
                 {
-                    IdDespesa = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     NomeDespesa = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -28,7 +28,7 @@ namespace GerenciadorFinanca.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Despesas", x => x.IdDespesa);
+                    table.PrimaryKey("PK_Despesas", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
         }

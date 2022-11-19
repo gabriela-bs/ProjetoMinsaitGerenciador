@@ -2,65 +2,63 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using GerenciadorFinanca.Data;
 using Microsoft.AspNetCore.Identity;
-using GerenciadorFinanca.Serviços;
-using GerenciadorFinanca.Repositorio.IContratos;
-using GerenciadorFinanca.Repositorio;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using GerenciadorFinanca.Models;
+using GerenciadorFinanca.Entidades;
+using GerenciadorFinanca.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ApiContext>(
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddDbContext<APIContexto>(
     options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version("8.0.31")))
 );
 
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<ApiContext>()
-        .AddDefaultTokenProviders();
+builder.Services.AddDefaultIdentity<AplicacaoUsuario>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddEntityFrameworkStores<APIContexto>();
+
+
 
 
     //Configuração do JWT
-var JwtConfigSection = builder.Configuration.GetSection("JwtConfig");
-builder.Services.Configure<JwtConfig>(JwtConfigSection);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      .AddJwtBearer(option =>
+      {
+          option.TokenValidationParameters = new TokenValidationParameters
+          {
+              ValidateIssuer = false,
+              ValidateAudience = false,
+              ValidateLifetime = true,
+              ValidateIssuerSigningKey = true,
+              ValidIssuer = "API.Securiry.Bearer",
+              ValidAudience = "API.Securiry.Bearer",
+              IssuerSigningKey = JwtSecurityKey.Create("Secret_Key-87654321")
+          };
 
-var jwtConfig = JwtConfigSection.Get<JwtConfig>();
-var key = Encoding.ASCII.GetBytes(jwtConfig.Secreto);
-
-
-builder.Services.AddAuthentication(a => {
-    a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(a => {
-        a.RequireHttpsMetadata = true;
-        a.SaveToken = true;
-        a.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = jwtConfig.ValidoEm,
-            ValidIssuer = jwtConfig.Emissor
-        };
-
-    });
-
-
-
-
-
-
+          option.Events = new JwtBearerEvents
+          {
+              OnAuthenticationFailed = context =>
+              {
+                  Console.WriteLine("OnAuthenticationFailed: " + context.Exception.Message);
+                  return Task.CompletedTask;
+              },
+              OnTokenValidated = context =>
+              {
+                  Console.WriteLine("OnTokenValidated: " + context.SecurityToken);
+                  return Task.CompletedTask;
+              }
+          };
+});
 
 
-builder.Services.AddScoped<IDespesaRepositorio, DespesaRepositorio>();
-
-builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(opt =>
     {
@@ -83,10 +81,10 @@ if (app.Environment.IsDevelopment())
         });
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

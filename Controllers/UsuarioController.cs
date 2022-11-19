@@ -1,14 +1,9 @@
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using GerenciadorFinanca.Data;
 using Microsoft.AspNetCore.Identity;
-using GerenciadorFinanca.Serviços;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 using GerenciadorFinanca.Models;
-using System.IdentityModel.Tokens.Jwt;
+using GerenciadorFinanca.Entidades;
+using GerenciadorFinanca.Token;
 
 namespace GerenciadorFinanca.Controllers
 {
@@ -17,86 +12,87 @@ namespace GerenciadorFinanca.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-         private readonly SignInManager<IdentityUser> _signInManager;
-         private readonly UserManager<IdentityUser> _userManager;
-         private readonly JwtConfig _jwtConfig;
+         private readonly SignInManager<AplicacaoUsuario> _signInManager;
+         private readonly UserManager<AplicacaoUsuario> _userManager;
 
 
-    public UsuarioController (SignInManager<IdentityUser> signInManager,
-    UserManager<IdentityUser> userManager, IOptions<JwtConfig> jwtConfig)
+    public UsuarioController (SignInManager<AplicacaoUsuario> signInManager,
+    UserManager<AplicacaoUsuario> userManager)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _jwtConfig = jwtConfig.Value;
     }
 
 
 
+    [AllowAnonymous]
+    [HttpPost("/apifinanceira/cadastro")]
+    public async Task<ActionResult> CadastroUsuario ([FromBody] Login login){
 
-    [HttpPost("cadastro")]
-    public async Task<ActionResult> Cadastro(UsuarioCadastro usuarioCadastro){
-
-        if(!ModelState.IsValid){
-             return BadRequest("Ocorreu um erro");
+        if(string.IsNullOrWhiteSpace(login.EmailUsuario) || string.IsNullOrWhiteSpace(login.Senha))
+        {
+            return Ok("Falta preencher alguns dados");
         }
 
-        var usuario = new IdentityUser{
-            UserName = usuarioCadastro.EmailUsuario,
-            Email = usuarioCadastro.EmailUsuario,
-            EmailConfirmed = true
+
+        var usuario = new AplicacaoUsuario
+        {
+            UserName = login.EmailUsuario,
+            Email = login.EmailUsuario,
+            Cpf = login.Cpf,
+            EmailConfirmed = true //autentica o email sem precisar de confirmação
         };
 
-        var resultado = await _userManager.CreateAsync(usuario, usuarioCadastro.Senha);
+        var resultado = await _userManager.CreateAsync(usuario, login.Senha);
 
-        if(!resultado.Succeeded){
+        if(!resultado.Succeeded)
+        {
             return BadRequest(resultado.Errors);
         }
 
             await _signInManager.SignInAsync(usuario, false);
 
-            return Ok(await GerarJwt(usuarioCadastro.EmailUsuario));
-
+            return Ok("Usuario adicionado com sucesso");
 
     }
 
-    [HttpPost("login")]
-    public async Task<ActionResult> Login (UsuarioCadastro loginUsuario){
 
-        if(!ModelState.IsValid){
-            return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-        }
+    [AllowAnonymous]
+    [HttpPost("login-autorizacao")]
+    public async Task<IActionResult> GerarToken ([FromBody] Login login)
+    {
+        if(string.IsNullOrWhiteSpace(login.EmailUsuario) || string.IsNullOrWhiteSpace(login.Senha)){
 
-        var resultado = await _signInManager.PasswordSignInAsync(loginUsuario.EmailUsuario, loginUsuario.Senha, false, true);
-
-        if(resultado.Succeeded){
-            return Ok(await GerarJwt(loginUsuario.EmailUsuario));
-        }
-
-        return BadRequest("Usuário ou senha inválidos");
-    
-    }
-
-    private async Task<string> GerarJwt(string email) {
-
-        var usuario = await _userManager.FindByEmailAsync(email);
-        
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtConfig.Secreto);
-
-
-        var tokenDescriptor = new SecurityTokenDescriptor{
-
-            Issuer = _jwtConfig.Emissor,
-            Audience = _jwtConfig.ValidoEm,
-            Expires = DateTime.UtcNow.AddHours(_jwtConfig.ExpiracaoHoras),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            return Unauthorized();
         };
 
-        return  tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
 
+        //verifica se o usuário e senha existem
+        var resultado = await _signInManager.PasswordSignInAsync(login.EmailUsuario, login.Senha, false, true);
+    
+
+        if(resultado.Succeeded){
+
+            //Responsável por retornar o id logado
+            var usuarioCurrent = await _userManager.FindByEmailAsync(login.EmailUsuario);
+            var usuarioId = usuarioCurrent.Id;
+
+            var token = new TokenJWTBuilder()
+                    .AddSecurityKey(JwtSecurityKey.Create("Secret_Key-87654321"))
+                .AddSubject("Empresa - ProjetoAPI")
+                .AddIssuer("Teste.Securiry.Bearer")
+                .AddAudience("Teste.Securiry.Bearer")
+                .AddClaim("usuarioId", usuarioId) //criptografa o usuario
+                .AddExpiry(10)
+                .Builder();
+
+                return Ok(token.value); //retorna o token para o usuário logado
+            }
+
+            else{
+                return Unauthorized();
+            }
+    
     }
- 
-        
-    }
- 
+}
 }

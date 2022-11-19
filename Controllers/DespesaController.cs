@@ -1,39 +1,48 @@
-using GerenciadorFinanca.Repositorio.IContratos;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using GerenciadorFinanca.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using GerenciadorFinanca.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using GerenciadorFinanca.Entidades;
+using GerenciadorFinanca.Repositorio;
 
 
 namespace GerenciadorFinanca.Controllers
 {
 
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
     public class DespesaController : ControllerBase
     {
 
-        private readonly IDespesaRepositorio _despesaRepositorio;
-        public DespesaController (IDespesaRepositorio despesaRepositorio){
+    private readonly APIContexto _apiContexto;
+    private readonly DespesaRepositorio _despRepositorio;
+    private readonly UserManager<AplicacaoUsuario> _userManager;
 
-            _despesaRepositorio = despesaRepositorio;
+        public DespesaController (APIContexto apiContexto, UserManager<AplicacaoUsuario> userManager, DespesaRepositorio despRepositorio)
+        {
+            _despRepositorio = despRepositorio;
+            _apiContexto = apiContexto;
+            _userManager = userManager;
         }
 
-
+    [Authorize]
     [HttpGet]
-    public async Task <IEnumerable<Despesa>> ListaTudo(){
+    public async Task <IEnumerable<Despesa>>ListarGastos(){
 
-        var item = await _despesaRepositorio.ListarGastos();
-        return item;
+        return await _despRepositorio.List();
+        
     }
 
-
+    [Authorize]
     [HttpGet("{id}")]
-    public async Task<IActionResult> Buscar(int id){
+    public async Task<IActionResult> Buscar(DespesaModel despesa){
 
-        var desp = await _despesaRepositorio.BuscarPorId(id);
+        var desp = await _apiContexto.Despesas.FindAsync(despesa.DespId);
 
 
         if(desp == null){
@@ -44,44 +53,73 @@ namespace GerenciadorFinanca.Controllers
         return Ok(desp);
     }
 
- //   [ClaimsAuthorize("Incluir Despesa")]
-    [HttpPost]
-    public async Task<IActionResult> CriaDespesa (Despesa desp){
+    [Authorize]
+    [HttpPost("api/inserindo-despesa")]
+    public async Task<IActionResult> CriarDespesa (DespesaModel despesa){
 
-        if(desp == null){
-            return BadRequest("Despesa não adicionada");
-        }
+        var despesaNova = new Despesa();
+        
+        despesaNova.NomeDespesa = despesa.NomeDespesa;
+        despesaNova.Valor = despesa.Valor;
+        despesaNova.DespesaData = despesa.DespesaData;
+        despesaNova.Categoria = despesa.Categoria;
+        despesaNova.DespId = await RetornarUsuarioLogado();
 
-        await _despesaRepositorio.AdicionarDespesa(desp);
-        return CreatedAtAction("Buscar", new { id = desp.IdDespesa}, desp);
+        await _apiContexto.Set<Despesa>().AddRangeAsync(despesaNova);
+
+        await _apiContexto.SaveChangesAsync();
+
+
+        return Ok();
     }
 
+    [Authorize]
+    [HttpPut("api/atualizando-despesa")]
+    public async Task<IActionResult> AtualizarDesp(int id, DespesaModel despesa){
 
- //   [ClaimsAuthorize("Atualizar Despesa")]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> AtualizandoDesp(int id, Despesa desp){
 
-        if(id != desp.IdDespesa){
-            
-            return BadRequest($"Não foi possível atualizar {id}");
-        }
+   //     var despesaAtualizada = _apiContexto.Entry(despesa).State = EntityState.Modified;
+        var despesaAtualizada = _apiContexto.Entry(despesa).State = EntityState.Modified;
 
-        await _despesaRepositorio.EditarDespesa(desp); 
+
+        await _apiContexto.SaveChangesAsync();
+
         return NoContent();
     }
 
- //   [ClaimsAuthorize("Deletar Despesa")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletarDesp (int id){
+    [Authorize]
+    [HttpDelete("api/deletando-despesa")]
+    public async Task<IActionResult> DeletarDesp (int id, DespesaModel despesa){
 
-        var despDeletada = await _despesaRepositorio.BuscarPorId(id);
+        var item = await _apiContexto.Despesas.FindAsync(despesa.Id);
+        
+        if (item == null){
 
-          if (despDeletada == null){
             return NotFound();
         }
-        await _despesaRepositorio.Deletar(id);
-        return Ok(despDeletada);
+
+        _apiContexto.Despesas.Remove(item);
+        await _apiContexto.SaveChangesAsync();
+        
+        return Ok();
+    }
+
+
+    private async Task<string> RetornarUsuarioLogado()
+    {
+
+        if(User != null){
+
+            //retorno do id do usuario logado
+            var usuarioId = User.FindFirst("usuarioId");
+            return usuarioId.Value;
+        }
+
+        return string.Empty;
+
+
     }
   
 }
+
 }

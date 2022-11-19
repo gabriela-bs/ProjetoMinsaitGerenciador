@@ -6,10 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GerenciadorFinanca.Migrations
 {
-    public partial class identityadc : Migration
+    public partial class usuariocomidentity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "DespId",
+                table: "Despesas",
+                type: "varchar(255)",
+                nullable: false,
+                defaultValue: "")
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .Annotation("Relational:ColumnOrder", 1);
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -34,6 +43,8 @@ namespace GerenciadorFinanca.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Cpf = table.Column<string>(type: "varchar(15)", maxLength: 15, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -192,6 +203,11 @@ namespace GerenciadorFinanca.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Despesas_DespId",
+                table: "Despesas",
+                column: "DespId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -227,10 +243,22 @@ namespace GerenciadorFinanca.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Despesas_AspNetUsers_DespId",
+                table: "Despesas",
+                column: "DespId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Despesas_AspNetUsers_DespId",
+                table: "Despesas");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -251,6 +279,14 @@ namespace GerenciadorFinanca.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Despesas_DespId",
+                table: "Despesas");
+
+            migrationBuilder.DropColumn(
+                name: "DespId",
+                table: "Despesas");
         }
     }
 }

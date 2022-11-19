@@ -1,71 +1,41 @@
 using GerenciadorFinanca.Data;
-using GerenciadorFinanca.Models;
-using GerenciadorFinanca.Repositorio.IContratos;
 using Microsoft.EntityFrameworkCore;
-
+using GerenciadorFinanca.Entidades;
 
 namespace GerenciadorFinanca.Repositorio
 {
-    public class DespesaRepositorio : IDespesaRepositorio
+    public class DespesaRepositorio
     {
-        private readonly ApiContext _apiContext;
+        private readonly DbContextOptions<APIContexto> _OptionsBuilder;
 
-        public DespesaRepositorio(ApiContext apiContext)
+        public DespesaRepositorio()
         {
-            _apiContext = apiContext;
+            _OptionsBuilder = new DbContextOptions<APIContexto>();
         }
 
-      public async Task<IEnumerable<Despesa>> ListarGastos(){
-
-         return await _apiContext.Despesas.AsNoTracking().ToListAsync();
-        
-    }
-
-        public async Task AdicionarDespesa(Despesa despesa){
-
-            _apiContext.Despesas.AddAsync(despesa);
-            await _apiContext.SaveChangesAsync();
-
-        }
-
-        public async Task<Despesa> BuscarPorId(int id){
-        
-           return await _apiContext.Despesas.FindAsync(id); 
-    }
-
-        public async Task EditarDespesa(Despesa despesa){
-
-            _apiContext.Entry(despesa).State = EntityState.Modified;
-
-
-            try{
-
-                await _apiContext.SaveChangesAsync();
+        public async Task<Despesa> GetEntityById(int Id)
+        {
+            using (var data = new APIContexto(_OptionsBuilder))
+            {
+                return await data.Set<Despesa>().FindAsync(Id);
             }
-            catch (DbUpdateConcurrencyException){
+        }
 
+        public async Task<List<Despesa>> List()
+        {
+            using (var data = new APIContexto(_OptionsBuilder))
+            {
+                return await data.Set<Despesa>().ToListAsync();
             }
-            
         }
 
-        public async Task Deletar(int id){
-     
-            var item = await BuscarPorId(id);
-            _apiContext.Despesas.Remove(item);
-            await _apiContext.SaveChangesAsync();
+        public async Task Update(Despesa Objeto)
+        {
+            using (var data = new APIContexto(_OptionsBuilder))
+            {
+                data.Set<Despesa>().Update(Objeto);
+                await data.SaveChangesAsync();
+            }
         }
-
     }
 }
-
-
-
-/*        public async Task<Despesa> TotalGastos(){
-           decimal valorTotal = _apiContext.Despesas.Where(val => val.DespesaData > DateTime.Now)
-            .Select(val => val.Valor)
-            .Sum();
-
-        return decimal valorTotal;
-            ;
-
-        }*/
